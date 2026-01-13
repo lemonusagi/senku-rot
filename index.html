@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Quest Log</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pixel-bg: #1a1a2e;
+            --pixel-border: #4e4e4e;
+            --pixel-accent: #f4b41a;
+            --poring-pink: #ff8fb1;
+            --poring-light: #ffc2d1;
+            --poring-blush: #ff5e8e;
+            --mastering-gold: #fcd34d;
+            --perfect-green: #22c55e;
+            --perfect-light: #86efac;
+        }
+
+        body {
+            background-color: #0f0f1b;
+            color: #e0e0e0;
+            font-family: 'VT323', monospace;
+            overflow-x: hidden;
+        }
+
+        /* Pixel Border Effect */
+        .pixel-box {
+            background: var(--pixel-bg);
+            border: 4px solid var(--pixel-border);
+            position: relative;
+            box-shadow: 
+                inset -4px -4px 0px 0px #00000055,
+                4px 4px 0px 0px #000000;
+        }
+
+        .pixel-title {
+            font-size: 2.5rem;
+            color: var(--pixel-accent);
+            text-shadow: 3px 3px 0px #000;
+            letter-spacing: 2px;
+            display: block;
+            width: 100%;
+        }
+
+        /* Mascot Container - Centered Alignment */
+        .mascot-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Poring Checkbox */
+        .checkbox-pixel {
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            background: #2d2d44;
+            border: 4px solid #4e4e4e;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
+            image-rendering: pixelated;
+        }
+
+        .checkbox-pixel:checked {
+            background: var(--poring-pink);
+            border-color: var(--poring-light);
+            animation: poring-bounce 0.4s ease-out;
+        }
+
+        .checkbox-pixel:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .checkbox-pixel:checked::after {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; width: 6px; height: 6px;
+            background: white;
+            border-radius: 2px;
+            opacity: 0.8;
+        }
+
+        @keyframes poring-bounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.4, 0.6); }
+            60% { transform: scale(0.8, 1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Quest Row */
+        .quest-row {
+            border-bottom: 4px solid #2d2d44;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
+        }
+
+        .quest-row:hover:not(.row-disabled) {
+            background: #24243e;
+        }
+
+        .row-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .completed-text {
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        /* [Widespread Slimefall] Progress */
+        .slime-bar-container {
+            height: 32px;
+            background: #000;
+            border: 4px solid var(--pixel-border);
+            position: relative;
+            overflow: hidden;
+            image-rendering: pixelated;
+        }
+
+        .slime-bar-fill {
+            height: 100%;
+            background: var(--poring-pink);
+            box-shadow: inset 0 4px 0 var(--poring-light);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Tiny Jelly Drop Rain - [Widespread Slimefall] */
+        .slime-rain {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(var(--poring-light) 25%, transparent 25%);
+            background-size: 16px 16px;
+            animation: slimefall 0.8s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes slimefall {
+            from { background-position: 0 0; }
+            to { background-position: 0 32px; }
+        }
+
+        /* Achievement Toast Notification */
+        .achievement-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
+            width: 90%;
+            max-width: 400px;
+            z-index: 1000;
+            background: #000;
+            border: 6px solid var(--mastering-gold);
+            padding: 16px;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            image-rendering: pixelated;
+        }
+
+        .achievement-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-close-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: #000;
+            border: 2px solid var(--mastering-gold);
+            color: var(--mastering-gold);
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            line-height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .toast-close-btn:hover {
+            background: var(--mastering-gold);
+            color: #000;
+        }
+
+        .achievement-toast .slime-rain-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.2;
+            pointer-events: none;
+            background-image: radial-gradient(var(--poring-light) 15%, transparent 15%);
+            background-size: 10px 10px;
+            animation: slimefall 0.5s linear infinite;
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .cal-pixel-day {
+            aspect-ratio: 1/1;
+            background: #2d2d44;
+            border: 2px solid #4e4e4e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: relative;
+            image-rendering: pixelated;
+        }
+
+        /* Star styling for perfect days */
+        .day-star {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .day-full { 
+            background: var(--perfect-green); 
+            color: #000;
+            border-color: var(--perfect-light);
+            animation: pulse-poring 2s infinite;
+        }
+
+        .day-partial { background: #3b82f6; color: #fff; }
+        .day-selected { outline: 4px solid var(--pixel-accent); z-index: 10; }
+        .day-today { color: var(--pixel-accent); text-decoration: underline; font-weight: bold; }
+
+        @keyframes pulse-poring {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(0.95); filter: brightness(1.1); }
+        }
+
+        .btn-pixel {
+            background: #4e4e4e;
+            border: 4px solid #000;
+            box-shadow: inset -4px -4px 0 #222;
+            padding: 8px 16px;
+            color: white;
+            text-transform: uppercase;
+            image-rendering: pixelated;
+            cursor: pointer;
+        }
+
+        .btn-pixel:active {
+            box-shadow: inset 4px 4px 0 #222;
+            transform: translateY(2px);
+        }
+
+        .tab-active {
+            background: var(--pixel-accent);
+            color: #000;
+            border-color: #b45309;
+        }
+
+        /* Pixel Sprite Styles */
+        .pixel-sprite {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        /* Fixed sizing for small category icons */
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) scale(1, 1); }
+            50% { transform: translateY(-10px) scale(1.05, 0.95); }
+        }
+
+        .bubble-anim {
+            animation: bubble 4s ease-in-out infinite;
+        }
+
+        @keyframes bubble {
+            0%, 100% { transform: translate(0, 0); opacity: 0.8; }
+            50% { transform: translate(3px, -5px); opacity: 1; }
+        }
+
+        /* Achievement Styles */
+        .achievement-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            filter: grayscale(1);
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+
+        .achievement-unlocked {
+            filter: grayscale(0);
+            opacity: 1;
+            border-color: var(--pixel-accent);
+            background: #24243e;
+        }
+
+        .achievement-unlocked .lock-icon {
+            display: none;
+        }
+
+        .lock-icon {
+            font-size: 1.5rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <!-- Achievement Toast -->
+    <div id="achievement-toast" class="achievement-toast">
+        <button id="close-toast" class="toast-close-btn">X</button>
+        <div class="slime-rain-bg"></div>
+        <div class="relative z-10">
+            <h4 class="text-mastering-gold text-lg uppercase tracking-widest mb-1">Achievement Unlocked!</h4>
+            <p id="toast-title" class="text-white text-xl"></p>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto">
+        
+        <!-- Navigation -->
+        <div class="flex mb-8 gap-2">
+            <button id="tab-list" class="btn-pixel flex-1 tab-active text-sm">Quests</button>
+            <button id="tab-calendar" class="btn-pixel flex-1 text-sm">Archives</button>
+            <button id="tab-achievements" class="btn-pixel flex-1 text-sm">Trophies</button>
+        </div>
+
+        <!-- Header - Centered Layout -->
+        <header class="mb-10 flex flex-col items-center text-center">
+            <div class="mascot-container">
+                <div id="mascot-sprite" class="floating w-24 h-24">
+                </div>
+            </div>
+            <h1 id="view-title" class="pixel-title uppercase mt-2 mb-2">Quest Log</h1>
+            <p id="current-date-label" class="text-xl text-slate-500 mb-6"></p>
+            
+            <!-- Quest Progress Section -->
+            <div id="quest-stats-section" class="pixel-box w-full p-4 bg-slate-900">
+                <p class="text-lg uppercase mb-2">I am not a grandpa?</p>
+                <div class="text-4xl mb-4">
+                    <span id="done-count">0</span> / <span id="total-count">0</span>
+                </div>
+                <div class="slime-bar-container">
+                    <div id="progress-bar" class="slime-bar-fill"></div>
+                    <div class="slime-rain"></div>
+                </div>
+                <button id="complete-all-btn" class="btn-pixel w-full mt-4 bg-yellow-600 border-yellow-400 text-sm">
+                    [ AUTO-COMPLETE ]
+                </button>
+            </div>
+
+            <!-- Calendar Info Section -->
+            <div id="calendar-stats-section" class="pixel-box w-full p-4 bg-slate-900 hidden">
+                <p class="text-lg uppercase mb-2">Non Grandpa Days</p>
+                <div class="text-4xl">
+                    <span id="perfect-days-count">0</span> / <span id="month-total-days">0</span>
+                </div>
+                <p class="text-sm uppercase text-slate-500 mt-2">Monthly Completion Records</p>
+            </div>
+
+            <!-- Trophy Info Section -->
+            <div id="trophy-stats-section" class="pixel-box w-full p-4 bg-slate-900 hidden">
+                <p class="text-lg uppercase mb-2">Rarity Collection</p>
+                <div class="text-4xl">
+                    <span id="unlocked-count">0</span> / 2
+                </div>
+                <div class="slime-bar-container mt-2">
+                    <div id="trophy-progress-bar" class="slime-bar-fill" style="background: var(--mastering-gold)"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quest List -->
+        <div id="view-list-container">
+            <main id="list-container" class="space-y-6">
+                <!-- Categories -->
+            </main>
+            
+            <div class="mt-12 text-center">
+                <button id="reset-btn" class="btn-pixel bg-red-900 text-white border-red-500">
+                    Purge Records
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div id="view-calendar-container" class="hidden">
+            <div class="pixel-box p-4">
+                <div class="flex justify-between items-center mb-6">
+                    <button id="prev-month" class="text-2xl text-yellow-500">◀</button>
+                    <h2 id="month-label" class="text-2xl uppercase">Month</h2>
+                    <button id="next-month" class="text-2xl text-yellow-500">▶</button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center text-xs text-slate-500 mb-4">
+                    <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                </div>
+                <div id="calendar-days" class="calendar-grid"></div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <div id="view-achievements-container" class="hidden">
+            <div id="achievement-list">
+                <!-- Achievement: First Perfect Day -->
+                <div id="ach-first" class="pixel-box achievement-card">
+                    <div class="category-icon text-3xl">🌱</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">I am now starting to getting rid of my Grandpa title in another world</h3>
+                        <p class="text-xs text-slate-400 uppercase">Complete all daily requirements for the first time</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+
+                <!-- Achievement: Perfect Week -->
+                <div id="ach-week" class="pixel-box achievement-card">
+                    <div class="category-icon text-3xl">🛡️</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">I have finally endured a week of not being a grandpa in another world</h3>
+                        <p class="text-xs text-slate-400 uppercase">Maintain a 7-day perfect completion streak</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const taskData = [
+                { category: "APOC ELITE", items: ["12:00 PM APOC", "5:00 PM APOC", "9:30 PM APOC"], require: "all" },
+                { category: "GACHA SUMMONS", items: ["12:30 PM", "3:30 PM", "6:00 PM", "9:00 PM"], require: 2 },
+                { category: "BANDIT INVASION", items: ["12:15 PM", "4:15 PM", "10:30 PM"], require: 1 },
+                { category: "FATE TRIALS", items: ["12:45 PM", "4:45 PM", "7:45 PM", "9:45 PM"], require: 2 },
+                { category: "BOUNTY HUNTER", items: ["20 KILLS", "5 FOLK", "3 UR Assist", "2 UR Submit", "1 ENEMY UR"], require: "all" },
+                { category: "SHADOW RAID", items: ["Entry 1", "Entry 2"], require: "all" },
+                { category: "WORLD EVENTS", items: ["8:00 PM", "8:30 PM", "9:30 PM"], require: "all" }
+            ];
+
+            const achNames = {
+                first: "I am now starting to getting rid of my Grandpa title in another world",
+                week: "I have finally endured a week of not being a grandpa in another world"
+            };
+
+            const createPoringSVG = (bodyColor, blushColor, highlightColor, hasCrown = false) => `
+                <svg viewBox="0 0 32 32" class="pixel-sprite">
+                    <rect x="23" y="5" width="2" height="2" fill="${highlightColor}" class="bubble-anim" />
+                    <rect x="27" y="9" width="1.5" height="1.5" fill="${highlightColor}" style="animation-delay: 1s" class="bubble-anim" />
+                    <path d="M12 4h8v2h4v2h2v4h2v8h-2v4h-2v2h-4v2H8v-2H4v-2H2v-4H0v-8h2v-4h2v-2h4v-2h4z" fill="#000" transform="translate(1,1)"/>
+                    <path d="M12 4h8v2h4v2h2v4h2v8h-2v4h-2v2h-4v2H8v-2H4v-2H2v-4H0v-8h2v-4h2v-2h4v-2h4z" fill="${bodyColor}"/>
+                    <rect x="8" y="8" width="8" height="2" fill="#fff" opacity="0.4" />
+                    <rect x="8" y="17" width="4" height="1" fill="#000" />
+                    <rect x="20" y="17" width="4" height="1" fill="#000" />
+                    <rect x="6" y="20" width="2" height="2" fill="${blushColor}" opacity="0.6" />
+                    <rect x="24" y="20" width="2" height="2" fill="${blushColor}" opacity="0.6" />
+                    <path d="M12 21v2h2v-1h4v1h2v-2" fill="none" stroke="#000" stroke-width="1" />
+                    ${hasCrown ? '<path d="M10 0h12v4H10z" fill="#ef4444" stroke="#000"/><rect x="15" y="0" width="2" height="2" fill="#fcd34d"/>' : ''}
+                </svg>
+            `;
+
+            const sprites = {
+                poring: createPoringSVG("#ff8fb1", "#ff5e8e", "#ffc2d1"),
+                marin: createPoringSVG("#93c5fd", "#3b82f6", "#dbeafe"),
+                mastering: createPoringSVG("#fcd34d", "#f59e0b", "#fef3c7", true)
+            };
+
+            let currentViewDate = new Date();
+            let calendarNavDate = new Date();
+            let history = JSON.parse(localStorage.getItem('pixel_achievement_history')) || {};
+            let unlockedAchievements = JSON.parse(localStorage.getItem('pixel_unlocked_achs')) || { first: false, week: false };
+            let toastTimer = null;
+
+            function getDS(date) { 
+                const offset = date.getTimezoneOffset();
+                const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
+                return adjustedDate.toISOString().split('T')[0]; 
+            }
+
+            function showAchievementToast(title) {
+                if (toastTimer) clearTimeout(toastTimer);
+                $('#toast-title').text(title);
+                $('#achievement-toast').addClass('show');
+                toastTimer = setTimeout(() => {
+                    $('#achievement-toast').removeClass('show');
+                }, 5000);
+            }
+
+            // Close button handler for toast
+            $('#close-toast').on('click', function() {
+                $('#achievement-toast').removeClass('show');
+                if (toastTimer) clearTimeout(toastTimer);
+            });
+
+            function isPerfectDay(dateKey) {
+                const state = history[dateKey];
+                if (!state) return false;
+                let completed = 0;
+                taskData.forEach((section, sIdx) => {
+                    let innerCount = 0;
+                    section.items.forEach((_, iIdx) => { if (state[`task-${sIdx}-${iIdx}`]) innerCount++; });
+                    const req = section.require === "all" ? section.items.length : section.require;
+                    if (innerCount >= req) completed++;
+                });
+                return completed === taskData.length;
+            }
+
+            function checkAchievements() {
+                const dates = Object.keys(history).sort();
+                let hasFirst = false;
+                let hasWeek = false;
+
+                // 1. Check for any perfect day
+                for (let d of dates) {
+                    if (isPerfectDay(d)) {
+                        hasFirst = true;
+                        break;
+                    }
+                }
+
+                // 2. Check for 7-day streak
+                if (dates.length >= 7) {
+                    let streak = 0;
+                    let lastDate = null;
+                    for (let dStr of dates) {
+                        const current = new Date(dStr);
+                        if (!isPerfectDay(dStr)) {
+                            streak = 0;
+                            lastDate = current;
+                            continue;
+                        }
+                        if (lastDate) {
+                            const diffTime = Math.abs(current - lastDate);
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            if (diffDays === 1) streak++;
+                            else streak = 1;
+                        } else streak = 1;
+                        lastDate = current;
+                        if (streak >= 7) {
+                            hasWeek = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Trigger Notifications for new unlocks
+                if (hasFirst && !unlockedAchievements.first) {
+                    unlockedAchievements.first = true;
+                    showAchievementToast(achNames.first);
+                }
+                if (hasWeek && !unlockedAchievements.week) {
+                    unlockedAchievements.week = true;
+                    showAchievementToast(achNames.week);
+                }
+
+                localStorage.setItem('pixel_unlocked_achs', JSON.stringify(unlockedAchievements));
+
+                $('#ach-first').toggleClass('achievement-unlocked', hasFirst);
+                $('#ach-week').toggleClass('achievement-unlocked', hasWeek);
+                
+                const count = (hasFirst ? 1 : 0) + (hasWeek ? 1 : 0);
+                $('#unlocked-count').text(count);
+                $('#trophy-progress-bar').css('width', (count / 2 * 100) + '%');
+            }
+
+            function calculatePerfectDaysInMonth(year, month) {
+                let count = 0;
+                Object.keys(history).forEach(dateKey => {
+                    const d = new Date(dateKey);
+                    if (d.getUTCFullYear() === year && d.getUTCMonth() === month) {
+                        if (isPerfectDay(dateKey)) count++;
+                    }
+                });
+                return count;
+            }
+
+            function initList() {
+                const dateKey = getDS(currentViewDate);
+                const state = history[dateKey] || {};
+                const isToday = dateKey === getDS(new Date());
+
+                $('#view-title').text(isToday ? "Quest Log" : "Archive");
+                $('#current-date-label').text(currentViewDate.toDateString().toUpperCase());
+                
+                const $listContainer = $('#list-container');
+                $listContainer.empty();
+                $('#total-count').text(taskData.length);
+
+                $.each(taskData, function(sIdx, section) {
+                    const $sectionDiv = $('<div>').addClass('pixel-box overflow-hidden section-block').attr('data-category-idx', sIdx);
+                    const $header = $('<div>').addClass('p-3 bg-slate-800 border-b-4 border-slate-700 flex justify-between items-center');
+                    const $titleContainer = $('<div>').addClass('flex items-center gap-3 overflow-hidden');
+                    const $iconWrapper = $('<div>').addClass('category-icon').html(sprites.poring);
+                    
+                    $titleContainer.append($iconWrapper);
+                    $titleContainer.append($('<span>').addClass('text-2xl text-yellow-500 truncate pt-1').text(section.category));
+                    $header.append($titleContainer);
+                    
+                    const reqText = section.require === "all" ? "100%" : `${section.require}+`;
+                    $header.append($('<span>').addClass('category-badge text-lg opacity-60 ml-2 whitespace-nowrap').text(reqText));
+                    $sectionDiv.append($header);
+
+                    const $itemBody = $('<div>');
+                    $.each(section.items, function(iIdx, item) {
+                        const id = `task-${sIdx}-${iIdx}`;
+                        const isChecked = state[id] || false;
+                        const $row = $('<label>').addClass('quest-row cursor-pointer');
+                        const $checkbox = $('<input>').attr({ type: 'checkbox', id: id }).addClass('checkbox-pixel task-check').prop('checked', isChecked);
+                        const $text = $('<span>').addClass('text-2xl pt-1').toggleClass('completed-text', isChecked).text(item);
+
+                        $checkbox.on('change', function() {
+                            const checked = $(this).is(':checked');
+                            if (!history[dateKey]) history[dateKey] = {};
+                            history[dateKey][id] = checked;
+                            localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
+                            $text.toggleClass('completed-text', checked);
+                            updateCounters();
+                            checkAchievements(); // Recheck for newly unlocked achievements
+                        });
+
+                        $row.append($checkbox).append($text);
+                        $itemBody.append($row);
+                    });
+                    $sectionDiv.append($itemBody);
+                    $listContainer.append($sectionDiv);
+                });
+                updateCounters();
+            }
+
+            function updateCounters() {
+                let completedCategories = 0;
+                $('.section-block').each(function() {
+                    const sIdx = $(this).data('category-idx');
+                    const section = taskData[sIdx];
+                    const $checks = $(this).find('.task-check');
+                    const count = $checks.filter(':checked').length;
+                    
+                    const req = section.require === "all" ? section.items.length : section.require;
+                    const isDone = count >= req;
+
+                    $checks.each(function() {
+                        if (isDone && !$(this).is(':checked')) {
+                            $(this).prop('disabled', true);
+                            $(this).closest('.quest-row').addClass('row-disabled');
+                        } else {
+                            $(this).prop('disabled', false);
+                            $(this).closest('.quest-row').removeClass('row-disabled');
+                        }
+                    });
+
+                    if (isDone) {
+                        completedCategories++;
+                        $(this).css('border-color', 'var(--poring-pink)');
+                        $(this).find('.category-badge').text('DONE').css('color', 'var(--poring-pink)');
+                        $(this).find('.category-icon').html(sprites.mastering);
+                    } else {
+                        $(this).css('border-color', '');
+                        const reqText = section.require === "all" ? "100%" : `${section.require}+`;
+                        $(this).find('.category-badge').text(reqText).css('color', '');
+                        $(this).find('.category-icon').html(sprites.poring);
+                    }
+                });
+                
+                $('#done-count').text(completedCategories);
+                const percent = (completedCategories / taskData.length) * 100;
+                $('#progress-bar').css('width', percent + '%');
+                
+                if (percent === 100) {
+                    $('#mascot-sprite').html(sprites.mastering);
+                } else if (percent > 0) {
+                    $('#mascot-sprite').html(sprites.marin);
+                } else {
+                    $('#mascot-sprite').html(sprites.poring);
+                }
+            }
+
+            function renderCalendar() {
+                const year = calendarNavDate.getFullYear();
+                const month = calendarNavDate.getMonth();
+                $('#month-label').text(new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(calendarNavDate));
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const $grid = $('#calendar-days').empty();
+
+                $('#perfect-days-count').text(calculatePerfectDaysInMonth(year, month));
+                $('#month-total-days').text(daysInMonth);
+
+                for (let i = 0; i < firstDay; i++) $grid.append('<div></div>');
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const d = new Date(year, month, day);
+                    const dKey = getDS(d);
+                    const state = history[dKey] || {};
+                    let completed = 0;
+                    taskData.forEach((section, sIdx) => {
+                        let innerCount = 0;
+                        section.items.forEach((_, iIdx) => { if (state[`task-${sIdx}-${iIdx}`]) innerCount++; });
+                        const req = section.require === "all" ? section.items.length : section.require;
+                        if (innerCount >= req) completed++;
+                    });
+
+                    let statusClass = "";
+                    let isPerfect = false;
+                    if (completed > 0) {
+                        isPerfect = (completed === taskData.length);
+                        statusClass = isPerfect ? "day-full" : "day-partial";
+                    }
+                    if (dKey === getDS(currentViewDate)) statusClass += " day-selected";
+                    if (dKey === getDS(new Date())) statusClass += " day-today";
+
+                    const $dayEl = $('<div>').addClass(`cal-pixel-day ${statusClass}`).text(day).on('click', function() {
+                        currentViewDate = new Date(year, month, day);
+                        $('#tab-list').trigger('click');
+                    });
+                    
+                    if (isPerfect) {
+                        $dayEl.append($('<span>').addClass('day-star').text('★'));
+                    }
+                    
+                    $grid.append($dayEl);
+                }
+            }
+
+            $('#complete-all-btn').on('click', function() {
+                const dateKey = getDS(currentViewDate);
+                if (!history[dateKey]) history[dateKey] = {};
+                
+                taskData.forEach((section, sIdx) => {
+                    section.items.forEach((_, iIdx) => {
+                        history[dateKey][`task-${sIdx}-${iIdx}`] = true;
+                    });
+                });
+                
+                localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
+                initList();
+                checkAchievements();
+            });
+
+            $('#tab-list').on('click', function() {
+                $('.btn-pixel').removeClass('tab-active');
+                $(this).addClass('tab-active');
+                $('#view-list-container').show();
+                $('#view-calendar-container').hide();
+                $('#view-achievements-container').hide();
+                $('#quest-stats-section').show();
+                $('#calendar-stats-section').hide();
+                $('#trophy-stats-section').hide();
+                initList();
+            });
+
+            $('#tab-calendar').on('click', function() {
+                $('.btn-pixel').removeClass('tab-active');
+                $(this).addClass('tab-active');
+                $('#view-list-container').hide();
+                $('#view-calendar-container').show();
+                $('#view-achievements-container').hide();
+                $('#quest-stats-section').hide();
+                $('#calendar-stats-section').removeClass('hidden').show();
+                $('#trophy-stats-section').hide();
+                renderCalendar();
+            });
+
+            $('#tab-achievements').on('click', function() {
+                $('.btn-pixel').removeClass('tab-active');
+                $(this).addClass('tab-active');
+                $('#view-list-container').hide();
+                $('#view-calendar-container').hide();
+                $('#view-achievements-container').show();
+                $('#quest-stats-section').hide();
+                $('#calendar-stats-section').hide();
+                $('#trophy-stats-section').removeClass('hidden').show();
+                $('#view-title').text("Achievements");
+                $('#current-date-label').text("LEGENDARY MILESTONES");
+                checkAchievements();
+            });
+
+            $('#prev-month').on('click', () => { calendarNavDate.setMonth(calendarNavDate.getMonth() - 1); renderCalendar(); });
+            $('#next-month').on('click', () => { calendarNavDate.setMonth(calendarNavDate.getMonth() + 1); renderCalendar(); });
+            
+            $('#reset-btn').on('click', function() {
+                if (confirm('ERASE ARCHIVE FOR THIS DAY?')) {
+                    delete history[getDS(currentViewDate)];
+                    localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
+                    // Reset lock status if historical data is wiped for testing
+                    unlockedAchievements = { first: false, week: false };
+                    localStorage.setItem('pixel_unlocked_achs', JSON.stringify(unlockedAchievements));
+                    initList();
+                    checkAchievements();
+                }
+            });
+
+            $('#tab-list').trigger('click');
+        });
+    </script>
+</body>
+</html>
