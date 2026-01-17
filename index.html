@@ -18,6 +18,7 @@
             --mastering-gold: #fcd34d;
             --perfect-green: #22c55e;
             --perfect-light: #86efac;
+            --angry-red: #ef4444;
         }
 
         body {
@@ -27,14 +28,11 @@
             overflow-x: hidden;
         }
 
-        /* Pixel Border Effect */
         .pixel-box {
             background: var(--pixel-bg);
             border: 4px solid var(--pixel-border);
             position: relative;
-            box-shadow: 
-                inset -4px -4px 0px 0px #00000055,
-                4px 4px 0px 0px #000000;
+            box-shadow: inset -4px -4px 0px 0px #00000055, 4px 4px 0px 0px #000000;
         }
 
         .pixel-title {
@@ -46,7 +44,6 @@
             width: 100%;
         }
 
-        /* Mascot Container - Centered Alignment */
         .mascot-container {
             width: 120px;
             height: 120px;
@@ -56,7 +53,6 @@
             justify-content: center;
         }
 
-        /* Poring Checkbox */
         .checkbox-pixel {
             appearance: none;
             width: 32px;
@@ -75,53 +71,46 @@
             animation: poring-bounce 0.4s ease-out;
         }
 
-        .checkbox-pixel:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            filter: grayscale(1);
-        }
-
-        .checkbox-pixel:checked::after {
-            content: '';
+        .slime-rain {
             position: absolute;
-            top: 4px; left: 4px; width: 6px; height: 6px;
-            background: white;
-            border-radius: 2px;
-            opacity: 0.8;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(90deg, var(--poring-pink) 2px, transparent 2px),
+                linear-gradient(0deg, var(--poring-pink) 2px, transparent 2px);
+            background-size: 12px 12px;
+            animation: jelly-cube-fall 1.2s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
-        @keyframes poring-bounce {
-            0% { transform: scale(1); }
-            30% { transform: scale(1.4, 0.6); }
-            60% { transform: scale(0.8, 1.2); }
-            100% { transform: scale(1); }
+        .slime-rain.active { opacity: 0.3; }
+
+        @keyframes jelly-cube-fall {
+            from { background-position: 0 0; }
+            to { background-position: 12px 24px; }
         }
 
-        /* Quest Row */
         .quest-row {
             border-bottom: 4px solid #2d2d44;
             padding: 12px;
             display: flex;
             align-items: center;
             gap: 16px;
-            transition: background 0.2s;
+            transition: background-color 0.3s;
         }
 
-        .quest-row:hover:not(.row-disabled) {
-            background: #24243e;
-        }
-
-        .row-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .transformed { 
+            background-color: rgba(255, 143, 177, 0.25) !important; 
+            border-left: 6px solid var(--poring-pink);
+            box-shadow: inset 4px 0 10px rgba(255, 94, 142, 0.2);
         }
 
         .completed-text {
-            color: #666;
-            text-decoration: line-through;
+            color: #ffc2d1;
+            text-shadow: 1px 1px 0px #000;
         }
 
-        /* [Widespread Slimefall] Progress */
         .slime-bar-container {
             height: 32px;
             background: #000;
@@ -139,24 +128,6 @@
             transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Tiny Jelly Drop Rain - [Widespread Slimefall] */
-        .slime-rain {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            background-image: 
-                radial-gradient(var(--poring-light) 25%, transparent 25%);
-            background-size: 16px 16px;
-            animation: slimefall 0.8s linear infinite;
-            opacity: 0.3;
-        }
-
-        @keyframes slimefall {
-            from { background-position: 0 0; }
-            to { background-position: 0 32px; }
-        }
-
-        /* Achievement Toast Notification */
         .achievement-toast {
             position: fixed;
             top: 20px;
@@ -170,48 +141,28 @@
             padding: 16px;
             text-align: center;
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            image-rendering: pixelated;
+            box-shadow: 0 0 0 4px #000, 8px 8px 0 rgba(0,0,0,0.5);
         }
 
-        .achievement-toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
+        .achievement-toast.show { transform: translateX(-50%) translateY(0); }
 
-        .toast-close-btn {
+        .btn-close-toast {
             position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 24px;
-            height: 24px;
-            background: #000;
-            border: 2px solid var(--mastering-gold);
-            color: var(--mastering-gold);
-            font-family: 'VT323', monospace;
-            font-size: 16px;
-            line-height: 20px;
-            cursor: pointer;
+            top: -12px;
+            right: -12px;
+            width: 32px;
+            height: 32px;
+            background: var(--angry-red);
+            border: 4px solid #000;
+            color: white;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 20;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
         }
 
-        .toast-close-btn:hover {
-            background: var(--mastering-gold);
-            color: #000;
-        }
-
-        .achievement-toast .slime-rain-bg {
-            position: absolute;
-            inset: 0;
-            opacity: 0.2;
-            pointer-events: none;
-            background-image: radial-gradient(var(--poring-light) 15%, transparent 15%);
-            background-size: 10px 10px;
-            animation: slimefall 0.5s linear infinite;
-        }
-
-        /* Calendar Grid */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -228,34 +179,13 @@
             font-size: 1.2rem;
             cursor: pointer;
             position: relative;
-            image-rendering: pixelated;
         }
 
-        /* Star styling for perfect days */
-        .day-star {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 0.8rem;
-            color: #fff;
-            text-shadow: 1px 1px 0 #000;
-        }
-
-        .day-full { 
-            background: var(--perfect-green); 
-            color: #000;
-            border-color: var(--perfect-light);
-            animation: pulse-poring 2s infinite;
-        }
-
+        .day-star { position: absolute; top: 2px; right: 2px; font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 0 #000; }
+        .day-full { background: var(--perfect-green); color: #000; border-color: var(--perfect-light); }
         .day-partial { background: #3b82f6; color: #fff; }
         .day-selected { outline: 4px solid var(--pixel-accent); z-index: 10; }
-        .day-today { color: var(--pixel-accent); text-decoration: underline; font-weight: bold; }
-
-        @keyframes pulse-poring {
-            0%, 100% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(0.95); filter: brightness(1.1); }
-        }
+        .day-today { color: var(--pixel-accent); font-weight: bold; }
 
         .btn-pixel {
             background: #4e4e4e;
@@ -264,58 +194,12 @@
             padding: 8px 16px;
             color: white;
             text-transform: uppercase;
-            image-rendering: pixelated;
             cursor: pointer;
+            font-size: 0.8rem;
         }
 
-        .btn-pixel:active {
-            box-shadow: inset 4px 4px 0 #222;
-            transform: translateY(2px);
-        }
+        .tab-active { background: var(--pixel-accent); color: #000; border-color: #b45309; }
 
-        .tab-active {
-            background: var(--pixel-accent);
-            color: #000;
-            border-color: #b45309;
-        }
-
-        /* Pixel Sprite Styles */
-        .pixel-sprite {
-            width: 100%;
-            height: 100%;
-            display: block;
-            image-rendering: pixelated;
-        }
-
-        /* Fixed sizing for small category icons */
-        .category-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) scale(1, 1); }
-            50% { transform: translateY(-10px) scale(1.05, 0.95); }
-        }
-
-        .bubble-anim {
-            animation: bubble 4s ease-in-out infinite;
-        }
-
-        @keyframes bubble {
-            0%, 100% { transform: translate(0, 0); opacity: 0.8; }
-            50% { transform: translate(3px, -5px); opacity: 1; }
-        }
-
-        /* Achievement Styles */
         .achievement-card {
             display: flex;
             align-items: center;
@@ -327,102 +211,56 @@
             transition: all 0.3s;
         }
 
-        .achievement-unlocked {
-            filter: grayscale(0);
-            opacity: 1;
-            border-color: var(--pixel-accent);
-            background: #24243e;
-        }
+        .achievement-unlocked { filter: grayscale(0); opacity: 1; border-color: var(--pixel-accent); background: #24243e; }
+        .lock-icon { font-size: 1.5rem; color: #666; }
+        
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        .achievement-unlocked .lock-icon {
-            display: none;
-        }
-
-        .lock-icon {
-            font-size: 1.5rem;
-            color: #666;
-        }
+        .pixel-sprite { width: 100%; height: 100%; image-rendering: pixelated; }
+        .category-icon { width: 32px; height: 32px; flex-shrink: 0; }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <!-- Achievement Toast -->
     <div id="achievement-toast" class="achievement-toast">
-        <button id="close-toast" class="toast-close-btn">X</button>
-        <div class="slime-rain-bg"></div>
-        <div class="relative z-10">
-            <h4 class="text-mastering-gold text-lg uppercase tracking-widest mb-1">Achievement Unlocked!</h4>
-            <p id="toast-title" class="text-white text-xl"></p>
-        </div>
+        <button id="close-toast" class="btn-close-toast">X</button>
+        <h4 class="text-mastering-gold text-lg uppercase tracking-widest mb-1">Achievement Unlocked!</h4>
+        <p id="toast-title" class="text-white text-xl"></p>
     </div>
 
     <div class="max-w-md mx-auto">
-        
-        <!-- Navigation -->
         <div class="flex mb-8 gap-2">
-            <button id="tab-list" class="btn-pixel flex-1 tab-active text-sm">Quests</button>
-            <button id="tab-calendar" class="btn-pixel flex-1 text-sm">Archives</button>
-            <button id="tab-achievements" class="btn-pixel flex-1 text-sm">Trophies</button>
+            <button id="tab-list" class="btn-pixel flex-1 tab-active">Quests</button>
+            <button id="tab-calendar" class="btn-pixel flex-1">Archives</button>
+            <button id="tab-achievements" class="btn-pixel flex-1">Trophies</button>
         </div>
 
-        <!-- Header - Centered Layout -->
-        <header class="mb-10 flex flex-col items-center text-center">
+        <header class="mb-6 flex flex-col items-center text-center">
             <div class="mascot-container">
-                <div id="mascot-sprite" class="floating w-24 h-24">
-                </div>
+                <div id="mascot-sprite" class="floating w-24 h-24"></div>
             </div>
             <h1 id="view-title" class="pixel-title uppercase mt-2 mb-2">Quest Log</h1>
-            <p id="current-date-label" class="text-xl text-slate-500 mb-6"></p>
+            <p id="current-date-label" class="text-xl text-slate-500 mb-4"></p>
             
-            <!-- Quest Progress Section -->
-            <div id="quest-stats-section" class="pixel-box w-full p-4 bg-slate-900">
-                <p class="text-lg uppercase mb-2">I am not a grandpa?</p>
-                <div class="text-4xl mb-4">
-                    <span id="done-count">0</span> / <span id="total-count">0</span>
-                </div>
+            <div id="quest-stats-section" class="pixel-box w-full p-4 bg-slate-900 mb-4">
+                <p class="text-lg uppercase mb-2">Daily Progress</p>
+                <div class="text-4xl mb-4"><span id="done-count">0</span> / <span id="total-count">0</span></div>
                 <div class="slime-bar-container">
                     <div id="progress-bar" class="slime-bar-fill"></div>
-                    <div class="slime-rain"></div>
-                </div>
-                <button id="complete-all-btn" class="btn-pixel w-full mt-4 bg-yellow-600 border-yellow-400 text-sm">
-                    [ AUTO-COMPLETE ]
-                </button>
-            </div>
-
-            <!-- Calendar Info Section -->
-            <div id="calendar-stats-section" class="pixel-box w-full p-4 bg-slate-900 hidden">
-                <p class="text-lg uppercase mb-2">Non Grandpa Days</p>
-                <div class="text-4xl">
-                    <span id="perfect-days-count">0</span> / <span id="month-total-days">0</span>
-                </div>
-                <p class="text-sm uppercase text-slate-500 mt-2">Monthly Completion Records</p>
-            </div>
-
-            <!-- Trophy Info Section -->
-            <div id="trophy-stats-section" class="pixel-box w-full p-4 bg-slate-900 hidden">
-                <p class="text-lg uppercase mb-2">Rarity Collection</p>
-                <div class="text-4xl">
-                    <span id="unlocked-count">0</span> / 2
-                </div>
-                <div class="slime-bar-container mt-2">
-                    <div id="trophy-progress-bar" class="slime-bar-fill" style="background: var(--mastering-gold)"></div>
+                    <div id="jelly-rain" class="slime-rain"></div>
                 </div>
             </div>
         </header>
 
-        <!-- Quest List -->
         <div id="view-list-container">
-            <main id="list-container" class="space-y-6">
-                <!-- Categories -->
-            </main>
-            
-            <div class="mt-12 text-center">
-                <button id="reset-btn" class="btn-pixel bg-red-900 text-white border-red-500">
-                    Purge Records
-                </button>
+            <div class="mb-6 flex gap-2">
+                <button id="complete-all-btn" class="btn-pixel flex-1 bg-yellow-600 border-yellow-400 font-bold hover:brightness-110 active:scale-95 transition-all">AUTO-COMPLETE</button>
+                <button id="reset-btn" class="btn-pixel flex-1 bg-red-900 text-white border-red-500 hover:brightness-110">CLEAR DAY</button>
             </div>
+            
+            <main id="list-container" class="space-y-6"></main>
         </div>
 
-        <!-- Calendar -->
         <div id="view-calendar-container" class="hidden">
             <div class="pixel-box p-4">
                 <div class="flex justify-between items-center mb-6">
@@ -437,25 +275,60 @@
             </div>
         </div>
 
-        <!-- Achievements -->
         <div id="view-achievements-container" class="hidden">
             <div id="achievement-list">
-                <!-- Achievement: First Perfect Day -->
-                <div id="ach-first" class="pixel-box achievement-card">
-                    <div class="category-icon text-3xl">🌱</div>
+                <div id="ach-fail" class="pixel-box achievement-card">
+                    <div id="icon-fail" class="category-icon"></div>
                     <div class="flex-1">
-                        <h3 class="text-xl text-yellow-500">I am now starting to getting rid of my Grandpa title in another world</h3>
-                        <p class="text-xs text-slate-400 uppercase">Complete all daily requirements for the first time</p>
+                        <h3 class="text-xl text-yellow-500">When am I ever going to get rid of my grandpa title in another world</h3>
+                        <p class="text-xs text-slate-400 uppercase">A record in your history shows missed tasks</p>
                     </div>
                     <div class="lock-icon">🔒</div>
                 </div>
 
-                <!-- Achievement: Perfect Week -->
-                <div id="ach-week" class="pixel-box achievement-card">
-                    <div class="category-icon text-3xl">🛡️</div>
+                <div id="ach-fail-apoc" class="pixel-box achievement-card">
+                    <div id="icon-fail-apoc" class="category-icon"></div>
                     <div class="flex-1">
-                        <h3 class="text-xl text-yellow-500">I have finally endured a week of not being a grandpa in another world</h3>
-                        <p class="text-xs text-slate-400 uppercase">Maintain a 7-day perfect completion streak</p>
+                        <h3 class="text-xl text-yellow-500">Aiya this grandpa miss an AFK event</h3>
+                        <p class="text-xs text-slate-400 uppercase">First time missing an APOC Elite quest</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+
+                <div id="ach-fail-gacha" class="pixel-box achievement-card">
+                    <div id="icon-fail-gacha" class="category-icon"></div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">Grandpa summons are now crying</h3>
+                        <p class="text-xs text-slate-400 uppercase">First time missing a Gacha Summon window</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+
+                <div id="ach-fail-world" class="pixel-box achievement-card">
+                    <div id="icon-fail-world" class="category-icon"></div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">HELLO GRANDPA OUR NATION DEPENDS ON YOU!!</h3>
+                        <p class="text-xs text-slate-400 uppercase">First time missing a World Event</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+
+                <hr class="border-slate-700 my-4">
+
+                <div id="ach-first" class="pixel-box achievement-card">
+                    <div id="icon-first" class="category-icon"></div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">I am not a grandpa anymore</h3>
+                        <p class="text-xs text-slate-400 uppercase">Achieve your first perfect daily score</p>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                </div>
+
+                <div id="ach-week" class="pixel-box achievement-card">
+                    <div id="icon-week" class="category-icon"></div>
+                    <div class="flex-1">
+                        <h3 class="text-xl text-yellow-500">I am finally not a grandpa for a week</h3>
+                        <p class="text-xs text-slate-400 uppercase">Maintain a 7-day perfect streak</p>
                     </div>
                     <div class="lock-icon">🔒</div>
                 </div>
@@ -475,140 +348,207 @@
                 { category: "WORLD EVENTS", items: ["8:00 PM", "8:30 PM", "9:30 PM"], require: "all" }
             ];
 
-            const achNames = {
-                first: "I am now starting to getting rid of my Grandpa title in another world",
-                week: "I have finally endured a week of not being a grandpa in another world"
-            };
-
-            const createPoringSVG = (bodyColor, blushColor, highlightColor, hasCrown = false) => `
+            const createPoringSVG = (bodyColor, blushColor, highlightColor, hasCrown = false, mood = 'happy') => `
                 <svg viewBox="0 0 32 32" class="pixel-sprite">
-                    <rect x="23" y="5" width="2" height="2" fill="${highlightColor}" class="bubble-anim" />
-                    <rect x="27" y="9" width="1.5" height="1.5" fill="${highlightColor}" style="animation-delay: 1s" class="bubble-anim" />
                     <path d="M12 4h8v2h4v2h2v4h2v8h-2v4h-2v2h-4v2H8v-2H4v-2H2v-4H0v-8h2v-4h2v-2h4v-2h4z" fill="#000" transform="translate(1,1)"/>
                     <path d="M12 4h8v2h4v2h2v4h2v8h-2v4h-2v2h-4v2H8v-2H4v-2H2v-4H0v-8h2v-4h2v-2h4v-2h4z" fill="${bodyColor}"/>
-                    <rect x="8" y="8" width="8" height="2" fill="#fff" opacity="0.4" />
-                    <rect x="8" y="17" width="4" height="1" fill="#000" />
-                    <rect x="20" y="17" width="4" height="1" fill="#000" />
-                    <rect x="6" y="20" width="2" height="2" fill="${blushColor}" opacity="0.6" />
-                    <rect x="24" y="20" width="2" height="2" fill="${blushColor}" opacity="0.6" />
-                    <path d="M12 21v2h2v-1h4v1h2v-2" fill="none" stroke="#000" stroke-width="1" />
-                    ${hasCrown ? '<path d="M10 0h12v4H10z" fill="#ef4444" stroke="#000"/><rect x="15" y="0" width="2" height="2" fill="#fcd34d"/>' : ''}
-                </svg>
-            `;
+                    ${mood === 'angry' ? `
+                        <path d="M9 14l3 3M23 14l-3 3" stroke="#000" stroke-width="2"/>
+                        <rect x="14" y="21" width="4" height="2" fill="#000" />
+                    ` : mood === 'crying' ? `
+                        <rect x="8" y="16" width="3" height="3" fill="#000" />
+                        <rect x="21" y="16" width="3" height="3" fill="#000" />
+                        <rect x="8" y="19" width="2" height="4" fill="#60a5fa" />
+                        <rect x="22" y="19" width="2" height="4" fill="#60a5fa" />
+                        <path d="M13 23h6" stroke="#000" stroke-width="1" />
+                    ` : mood === 'disappointed' ? `
+                        <rect x="7" y="15" width="5" height="2" fill="#000" />
+                        <rect x="20" y="15" width="5" height="2" fill="#000" />
+                        <rect x="11" y="23" width="10" height="2" fill="#000" />
+                    ` : `
+                        <rect x="8" y="17" width="4" height="1" fill="#000" />
+                        <rect x="20" y="17" width="4" height="1" fill="#000" />
+                        <path d="M12 21h8" stroke="#000" stroke-width="1" />
+                    `}
+                    ${hasCrown ? '<path d="M10 0h12v4H10z" fill="#ef4444"/><rect x="15" y="0" width="2" height="2" fill="#fcd34d"/>' : ''}
+                </svg>`;
 
             const sprites = {
                 poring: createPoringSVG("#ff8fb1", "#ff5e8e", "#ffc2d1"),
                 marin: createPoringSVG("#93c5fd", "#3b82f6", "#dbeafe"),
-                mastering: createPoringSVG("#fcd34d", "#f59e0b", "#fef3c7", true)
+                mastering: createPoringSVG("#fcd34d", "#f59e0b", "#fef3c7", true),
+                angry: createPoringSVG("#ef4444", "#991b1b", "#f87171", false, 'angry'),
+                crying: createPoringSVG("#ff8fb1", "#ff5e8e", "#ffc2d1", false, 'crying'),
+                disappointed: createPoringSVG("#ff8fb1", "#ff5e8e", "#ffc2d1", false, 'disappointed')
             };
 
             let currentViewDate = new Date();
             let calendarNavDate = new Date();
-            let history = JSON.parse(localStorage.getItem('pixel_achievement_history')) || {};
-            let unlockedAchievements = JSON.parse(localStorage.getItem('pixel_unlocked_achs')) || { first: false, week: false };
-            let toastTimer = null;
+            let history = JSON.parse(localStorage.getItem('pixel_quest_v2_history')) || {};
+            let persistentUnlocks = JSON.parse(localStorage.getItem('pixel_quest_v2_unlocks')) || { 
+                grandpa_fail: false, 
+                fail_apoc: false,
+                fail_gacha: false,
+                fail_world: false,
+                first_perfect: false, 
+                week_streak: false,
+                months: [] 
+            };
+
+            let toastTimeout;
 
             function getDS(date) { 
-                const offset = date.getTimezoneOffset();
-                const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
-                return adjustedDate.toISOString().split('T')[0]; 
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             }
 
-            function showAchievementToast(title) {
-                if (toastTimer) clearTimeout(toastTimer);
-                $('#toast-title').text(title);
-                $('#achievement-toast').addClass('show');
-                toastTimer = setTimeout(() => {
-                    $('#achievement-toast').removeClass('show');
-                }, 5000);
-            }
+            function getDayStats(dateKey) {
+                const state = history[dateKey] || {};
+                let completedCount = 0;
+                let someMarked = false;
+                let missedCategories = [];
 
-            // Close button handler for toast
-            $('#close-toast').on('click', function() {
-                $('#achievement-toast').removeClass('show');
-                if (toastTimer) clearTimeout(toastTimer);
-            });
-
-            function isPerfectDay(dateKey) {
-                const state = history[dateKey];
-                if (!state) return false;
-                let completed = 0;
                 taskData.forEach((section, sIdx) => {
                     let innerCount = 0;
-                    section.items.forEach((_, iIdx) => { if (state[`task-${sIdx}-${iIdx}`]) innerCount++; });
+                    section.items.forEach((_, iIdx) => {
+                        if (state[`task-${sIdx}-${iIdx}`]) {
+                            innerCount++;
+                            someMarked = true;
+                        }
+                    });
                     const req = section.require === "all" ? section.items.length : section.require;
-                    if (innerCount >= req) completed++;
+                    if (innerCount >= req) {
+                        completedCount++;
+                    } else {
+                        missedCategories.push(section.category);
+                    }
                 });
-                return completed === taskData.length;
+
+                return {
+                    completed: completedCount,
+                    total: taskData.length,
+                    perfect: completedCount === taskData.length,
+                    some: someMarked,
+                    missed: missedCategories
+                };
             }
 
-            function checkAchievements() {
-                const dates = Object.keys(history).sort();
-                let hasFirst = false;
-                let hasWeek = false;
+            function showToast(title) {
+                clearTimeout(toastTimeout);
+                $('#toast-title').text(title);
+                $('#achievement-toast').addClass('show');
+                toastTimeout = setTimeout(() => $('#achievement-toast').removeClass('show'), 6000);
+            }
 
-                // 1. Check for any perfect day
-                for (let d of dates) {
-                    if (isPerfectDay(d)) {
-                        hasFirst = true;
-                        break;
+            $('#close-toast').on('click', function() {
+                $('#achievement-toast').removeClass('show');
+                clearTimeout(toastTimeout);
+            });
+
+            function checkAchievements() {
+                const sortedDateKeys = Object.keys(history).sort();
+                const todayKey = getDS(new Date());
+                let newlyUnlocked = [];
+
+                // Reset trackers to re-evaluate based on current history
+                let currentFails = {
+                    any: false,
+                    apoc: false,
+                    gacha: false,
+                    world: false
+                };
+
+                for (let key of sortedDateKeys) {
+                    const stats = getDayStats(key);
+                    if (!stats.some) continue;
+
+                    // Only count past dates for Grandpa failures
+                    const isHistory = key < todayKey;
+
+                    if (isHistory) {
+                        if (!stats.perfect) currentFails.any = true;
+                        if (stats.missed.includes("APOC ELITE")) currentFails.apoc = true;
+                        if (stats.missed.includes("GACHA SUMMONS")) currentFails.gacha = true;
+                        if (stats.missed.includes("WORLD EVENTS")) currentFails.world = true;
                     }
                 }
 
-                // 2. Check for 7-day streak
-                if (dates.length >= 7) {
-                    let streak = 0;
-                    let lastDate = null;
-                    for (let dStr of dates) {
-                        const current = new Date(dStr);
-                        if (!isPerfectDay(dStr)) {
-                            streak = 0;
-                            lastDate = current;
-                            continue;
-                        }
-                        if (lastDate) {
-                            const diffTime = Math.abs(current - lastDate);
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            if (diffDays === 1) streak++;
-                            else streak = 1;
-                        } else streak = 1;
-                        lastDate = current;
-                        if (streak >= 7) {
-                            hasWeek = true;
+                // If a Grandpa failure tracker goes from false to true, it's "Newly Unlocked"
+                if (currentFails.any && !persistentUnlocks.grandpa_fail) newlyUnlocked.push("When am I ever going to get rid of my grandpa title in another world");
+                if (currentFails.apoc && !persistentUnlocks.fail_apoc) newlyUnlocked.push("Aiya this grandpa miss an AFK event");
+                if (currentFails.gacha && !persistentUnlocks.fail_gacha) newlyUnlocked.push("Grandpa summons are now crying");
+                if (currentFails.world && !persistentUnlocks.fail_world) newlyUnlocked.push("HELLO GRANDPA OUR NATION DEPENDS ON YOU!!");
+
+                // Update persistent state (can go back to false if all past dates are now perfect)
+                persistentUnlocks.grandpa_fail = currentFails.any;
+                persistentUnlocks.fail_apoc = currentFails.apoc;
+                persistentUnlocks.fail_gacha = currentFails.gacha;
+                persistentUnlocks.fail_world = currentFails.world;
+
+                // First Perfect (One-way unlock)
+                if (!persistentUnlocks.first_perfect) {
+                    for (let key of sortedDateKeys) {
+                        if (getDayStats(key).perfect) {
+                            persistentUnlocks.first_perfect = true;
+                            newlyUnlocked.push("I am not a grandpa anymore");
                             break;
                         }
                     }
                 }
 
-                // Trigger Notifications for new unlocks
-                if (hasFirst && !unlockedAchievements.first) {
-                    unlockedAchievements.first = true;
-                    showAchievementToast(achNames.first);
+                // Streak (Re-evaluable)
+                let highestStreak = 0;
+                let currentStreak = 0;
+                if (sortedDateKeys.length > 0) {
+                    const firstDate = new Date(sortedDateKeys[0]);
+                    const lastDate = new Date();
+                    const tempDate = new Date(firstDate);
+                    while(tempDate <= lastDate) {
+                        const key = getDS(tempDate);
+                        if (getDayStats(key).perfect) {
+                            currentStreak++;
+                            highestStreak = Math.max(highestStreak, currentStreak);
+                        } else { currentStreak = 0; }
+                        tempDate.setDate(tempDate.getDate() + 1);
+                    }
                 }
-                if (hasWeek && !unlockedAchievements.week) {
-                    unlockedAchievements.week = true;
-                    showAchievementToast(achNames.week);
+                const reachedWeek = highestStreak >= 7;
+                if (reachedWeek && !persistentUnlocks.week_streak) newlyUnlocked.push("I am finally not a grandpa for a week");
+                persistentUnlocks.week_streak = reachedWeek;
+
+                localStorage.setItem('pixel_quest_v2_unlocks', JSON.stringify(persistentUnlocks));
+                if (newlyUnlocked.length > 0) {
+                    newlyUnlocked.forEach(title => showToast(title));
                 }
-
-                localStorage.setItem('pixel_unlocked_achs', JSON.stringify(unlockedAchievements));
-
-                $('#ach-first').toggleClass('achievement-unlocked', hasFirst);
-                $('#ach-week').toggleClass('achievement-unlocked', hasWeek);
-                
-                const count = (hasFirst ? 1 : 0) + (hasWeek ? 1 : 0);
-                $('#unlocked-count').text(count);
-                $('#trophy-progress-bar').css('width', (count / 2 * 100) + '%');
+                updateAchievementUI();
             }
 
-            function calculatePerfectDaysInMonth(year, month) {
-                let count = 0;
-                Object.keys(history).forEach(dateKey => {
-                    const d = new Date(dateKey);
-                    if (d.getUTCFullYear() === year && d.getUTCMonth() === month) {
-                        if (isPerfectDay(dateKey)) count++;
-                    }
-                });
-                return count;
+            function updateAchievementUI() {
+                $('#ach-fail').toggleClass('achievement-unlocked', persistentUnlocks.grandpa_fail);
+                $('#ach-fail .lock-icon').toggle(!persistentUnlocks.grandpa_fail);
+                $('#icon-fail').html(sprites.angry);
+
+                $('#ach-fail-apoc').toggleClass('achievement-unlocked', persistentUnlocks.fail_apoc);
+                $('#ach-fail-apoc .lock-icon').toggle(!persistentUnlocks.fail_apoc);
+                $('#icon-fail-apoc').html(sprites.disappointed);
+
+                $('#ach-fail-gacha').toggleClass('achievement-unlocked', persistentUnlocks.fail_gacha);
+                $('#ach-fail-gacha .lock-icon').toggle(!persistentUnlocks.fail_gacha);
+                $('#icon-fail-gacha').html(sprites.crying);
+
+                $('#ach-fail-world').toggleClass('achievement-unlocked', persistentUnlocks.fail_world);
+                $('#ach-fail-world .lock-icon').toggle(!persistentUnlocks.fail_world);
+                $('#icon-fail-world').html(sprites.angry);
+
+                $('#ach-first').toggleClass('achievement-unlocked', persistentUnlocks.first_perfect);
+                $('#ach-first .lock-icon').toggle(!persistentUnlocks.first_perfect);
+                $('#icon-first').html(sprites.poring);
+
+                $('#ach-week').toggleClass('achievement-unlocked', persistentUnlocks.week_streak);
+                $('#ach-week .lock-icon').toggle(!persistentUnlocks.week_streak);
+                $('#icon-week').html(sprites.mastering);
             }
 
             function initList() {
@@ -619,214 +559,149 @@
                 $('#view-title').text(isToday ? "Quest Log" : "Archive");
                 $('#current-date-label').text(currentViewDate.toDateString().toUpperCase());
                 
-                const $listContainer = $('#list-container');
-                $listContainer.empty();
+                const $list = $('#list-container').empty();
                 $('#total-count').text(taskData.length);
 
-                $.each(taskData, function(sIdx, section) {
-                    const $sectionDiv = $('<div>').addClass('pixel-box overflow-hidden section-block').attr('data-category-idx', sIdx);
-                    const $header = $('<div>').addClass('p-3 bg-slate-800 border-b-4 border-slate-700 flex justify-between items-center');
-                    const $titleContainer = $('<div>').addClass('flex items-center gap-3 overflow-hidden');
-                    const $iconWrapper = $('<div>').addClass('category-icon').html(sprites.poring);
-                    
-                    $titleContainer.append($iconWrapper);
-                    $titleContainer.append($('<span>').addClass('text-2xl text-yellow-500 truncate pt-1').text(section.category));
-                    $header.append($titleContainer);
-                    
-                    const reqText = section.require === "all" ? "100%" : `${section.require}+`;
-                    $header.append($('<span>').addClass('category-badge text-lg opacity-60 ml-2 whitespace-nowrap').text(reqText));
-                    $sectionDiv.append($header);
+                taskData.forEach((section, sIdx) => {
+                    const $sec = $('<div>').addClass('pixel-box overflow-hidden section-block').attr('data-sidx', sIdx);
+                    $sec.append(`
+                        <div class="p-3 bg-slate-800 border-b-4 border-slate-700 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="category-icon">${sprites.poring}</div>
+                                <span class="text-2xl text-yellow-500 pt-1">${section.category}</span>
+                            </div>
+                        </div>
+                    `);
 
-                    const $itemBody = $('<div>');
-                    $.each(section.items, function(iIdx, item) {
+                    const $body = $('<div>');
+                    section.items.forEach((item, iIdx) => {
                         const id = `task-${sIdx}-${iIdx}`;
-                        const isChecked = state[id] || false;
-                        const $row = $('<label>').addClass('quest-row cursor-pointer');
-                        const $checkbox = $('<input>').attr({ type: 'checkbox', id: id }).addClass('checkbox-pixel task-check').prop('checked', isChecked);
-                        const $text = $('<span>').addClass('text-2xl pt-1').toggleClass('completed-text', isChecked).text(item);
+                        const isChecked = !!state[id];
+                        const $row = $(`
+                            <label class="quest-row cursor-pointer ${isChecked ? 'transformed' : ''}">
+                                <input type="checkbox" class="checkbox-pixel task-check" ${isChecked ? 'checked' : ''} data-id="${id}">
+                                <span class="text-2xl pt-1 ${isChecked ? 'completed-text' : ''}">${item}</span>
+                            </label>
+                        `);
 
-                        $checkbox.on('change', function() {
+                        $row.find('input').on('change', function() {
                             const checked = $(this).is(':checked');
                             if (!history[dateKey]) history[dateKey] = {};
                             history[dateKey][id] = checked;
-                            localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
-                            $text.toggleClass('completed-text', checked);
-                            updateCounters();
-                            checkAchievements(); // Recheck for newly unlocked achievements
-                        });
+                            
+                            if (!checked) {
+                                let hasAny = false;
+                                for (let k in history[dateKey]) if (history[dateKey][k]) hasAny = true;
+                                if (!hasAny) delete history[dateKey];
+                            }
 
-                        $row.append($checkbox).append($text);
-                        $itemBody.append($row);
+                            localStorage.setItem('pixel_quest_v2_history', JSON.stringify(history));
+                            $(this).next().toggleClass('completed-text', checked);
+                            $(this).closest('.quest-row').toggleClass('transformed', checked);
+                            updateCounters();
+                        });
+                        $body.append($row);
                     });
-                    $sectionDiv.append($itemBody);
-                    $listContainer.append($sectionDiv);
+                    $sec.append($body);
+                    $list.append($sec);
                 });
                 updateCounters();
             }
 
             function updateCounters() {
-                let completedCategories = 0;
+                let completed = 0;
                 $('.section-block').each(function() {
-                    const sIdx = $(this).data('category-idx');
-                    const section = taskData[sIdx];
-                    const $checks = $(this).find('.task-check');
-                    const count = $checks.filter(':checked').length;
-                    
-                    const req = section.require === "all" ? section.items.length : section.require;
-                    const isDone = count >= req;
-
-                    $checks.each(function() {
-                        if (isDone && !$(this).is(':checked')) {
-                            $(this).prop('disabled', true);
-                            $(this).closest('.quest-row').addClass('row-disabled');
-                        } else {
-                            $(this).prop('disabled', false);
-                            $(this).closest('.quest-row').removeClass('row-disabled');
-                        }
-                    });
-
-                    if (isDone) {
-                        completedCategories++;
+                    const sIdx = $(this).data('sidx');
+                    const req = taskData[sIdx].require === "all" ? taskData[sIdx].items.length : taskData[sIdx].require;
+                    const count = $(this).find('.task-check:checked').length;
+                    if (count >= req) {
+                        completed++;
                         $(this).css('border-color', 'var(--poring-pink)');
-                        $(this).find('.category-badge').text('DONE').css('color', 'var(--poring-pink)');
-                        $(this).find('.category-icon').html(sprites.mastering);
-                    } else {
-                        $(this).css('border-color', '');
-                        const reqText = section.require === "all" ? "100%" : `${section.require}+`;
-                        $(this).find('.category-badge').text(reqText).css('color', '');
-                        $(this).find('.category-icon').html(sprites.poring);
-                    }
+                    } else { $(this).css('border-color', ''); }
                 });
                 
-                $('#done-count').text(completedCategories);
-                const percent = (completedCategories / taskData.length) * 100;
-                $('#progress-bar').css('width', percent + '%');
+                $('#done-count').text(completed);
+                const pct = (completed / taskData.length) * 100;
+                $('#progress-bar').css('width', pct + '%');
+                $('#mascot-sprite').html(pct === 100 ? sprites.mastering : (pct > 0 ? sprites.marin : sprites.poring));
                 
-                if (percent === 100) {
-                    $('#mascot-sprite').html(sprites.mastering);
-                } else if (percent > 0) {
-                    $('#mascot-sprite').html(sprites.marin);
-                } else {
-                    $('#mascot-sprite').html(sprites.poring);
-                }
+                if (pct > 0) $('#jelly-rain').addClass('active');
+                else $('#jelly-rain').removeClass('active');
             }
 
             function renderCalendar() {
                 const year = calendarNavDate.getFullYear();
                 const month = calendarNavDate.getMonth();
                 $('#month-label').text(new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(calendarNavDate));
-                const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const first = new Date(year, month, 1).getDay();
+                const total = new Date(year, month + 1, 0).getDate();
                 const $grid = $('#calendar-days').empty();
 
-                $('#perfect-days-count').text(calculatePerfectDaysInMonth(year, month));
-                $('#month-total-days').text(daysInMonth);
-
-                for (let i = 0; i < firstDay; i++) $grid.append('<div></div>');
-
-                for (let day = 1; day <= daysInMonth; day++) {
+                for (let i = 0; i < first; i++) $grid.append('<div></div>');
+                for (let day = 1; day <= total; day++) {
                     const d = new Date(year, month, day);
-                    const dKey = getDS(d);
-                    const state = history[dKey] || {};
-                    let completed = 0;
-                    taskData.forEach((section, sIdx) => {
-                        let innerCount = 0;
-                        section.items.forEach((_, iIdx) => { if (state[`task-${sIdx}-${iIdx}`]) innerCount++; });
-                        const req = section.require === "all" ? section.items.length : section.require;
-                        if (innerCount >= req) completed++;
-                    });
+                    const key = getDS(d);
+                    const stats = getDayStats(key);
+                    let cls = "";
+                    if (stats.some) cls = stats.perfect ? "day-full" : "day-partial";
+                    if (key === getDS(currentViewDate)) cls += " day-selected";
+                    if (key === getDS(new Date())) cls += " day-today";
 
-                    let statusClass = "";
-                    let isPerfect = false;
-                    if (completed > 0) {
-                        isPerfect = (completed === taskData.length);
-                        statusClass = isPerfect ? "day-full" : "day-partial";
-                    }
-                    if (dKey === getDS(currentViewDate)) statusClass += " day-selected";
-                    if (dKey === getDS(new Date())) statusClass += " day-today";
-
-                    const $dayEl = $('<div>').addClass(`cal-pixel-day ${statusClass}`).text(day).on('click', function() {
-                        currentViewDate = new Date(year, month, day);
-                        $('#tab-list').trigger('click');
+                    const $day = $(`<div class="cal-pixel-day ${cls}">${day}</div>`).on('click', () => {
+                        currentViewDate = d;
+                        $('#tab-list').click();
                     });
-                    
-                    if (isPerfect) {
-                        $dayEl.append($('<span>').addClass('day-star').text('★'));
-                    }
-                    
-                    $grid.append($dayEl);
+                    if (stats.perfect) $day.append('<span class="day-star">★</span>');
+                    $grid.append($day);
                 }
             }
 
             $('#complete-all-btn').on('click', function() {
-                const dateKey = getDS(currentViewDate);
-                if (!history[dateKey]) history[dateKey] = {};
-                
-                taskData.forEach((section, sIdx) => {
-                    section.items.forEach((_, iIdx) => {
-                        history[dateKey][`task-${sIdx}-${iIdx}`] = true;
-                    });
-                });
-                
-                localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
+                const key = getDS(currentViewDate);
+                if (!history[key]) history[key] = {};
+                taskData.forEach((s, sIdx) => s.items.forEach((_, iIdx) => history[key][`task-${sIdx}-${iIdx}`] = true));
+                localStorage.setItem('pixel_quest_v2_history', JSON.stringify(history));
                 initList();
                 checkAchievements();
             });
 
-            $('#tab-list').on('click', function() {
-                $('.btn-pixel').removeClass('tab-active');
-                $(this).addClass('tab-active');
-                $('#view-list-container').show();
-                $('#view-calendar-container').hide();
-                $('#view-achievements-container').hide();
-                $('#quest-stats-section').show();
-                $('#calendar-stats-section').hide();
-                $('#trophy-stats-section').hide();
+            $('#reset-btn').on('click', () => {
+                delete history[getDS(currentViewDate)];
+                localStorage.setItem('pixel_quest_v2_history', JSON.stringify(history));
                 initList();
+                checkAchievements(); 
             });
 
-            $('#tab-calendar').on('click', function() {
-                $('.btn-pixel').removeClass('tab-active');
-                $(this).addClass('tab-active');
-                $('#view-list-container').hide();
+            $('#tab-list').on('click', function() { 
+                $('.btn-pixel').removeClass('tab-active'); $(this).addClass('tab-active');
+                $('#view-list-container, #quest-stats-section').show();
+                $('#view-calendar-container, #view-achievements-container').hide();
+                initList();
+                checkAchievements();
+            });
+
+            $('#tab-calendar').on('click', function() { 
+                $('.btn-pixel').removeClass('tab-active'); $(this).addClass('tab-active');
                 $('#view-calendar-container').show();
-                $('#view-achievements-container').hide();
-                $('#quest-stats-section').hide();
-                $('#calendar-stats-section').removeClass('hidden').show();
-                $('#trophy-stats-section').hide();
+                $('#view-list-container, #view-achievements-container, #quest-stats-section').hide();
                 renderCalendar();
+                checkAchievements();
             });
 
-            $('#tab-achievements').on('click', function() {
-                $('.btn-pixel').removeClass('tab-active');
-                $(this).addClass('tab-active');
-                $('#view-list-container').hide();
-                $('#view-calendar-container').hide();
+            $('#tab-achievements').on('click', function() { 
+                $('.btn-pixel').removeClass('tab-active'); $(this).addClass('tab-active');
                 $('#view-achievements-container').show();
-                $('#quest-stats-section').hide();
-                $('#calendar-stats-section').hide();
-                $('#trophy-stats-section').removeClass('hidden').show();
-                $('#view-title').text("Achievements");
-                $('#current-date-label').text("LEGENDARY MILESTONES");
+                $('#view-list-container, #view-calendar-container, #quest-stats-section').hide();
+                $('#view-title').text("Trophies");
+                $('#current-date-label').text("NON-GRANDPA RECORDS");
                 checkAchievements();
             });
 
             $('#prev-month').on('click', () => { calendarNavDate.setMonth(calendarNavDate.getMonth() - 1); renderCalendar(); });
             $('#next-month').on('click', () => { calendarNavDate.setMonth(calendarNavDate.getMonth() + 1); renderCalendar(); });
-            
-            $('#reset-btn').on('click', function() {
-                if (confirm('ERASE ARCHIVE FOR THIS DAY?')) {
-                    delete history[getDS(currentViewDate)];
-                    localStorage.setItem('pixel_achievement_history', JSON.stringify(history));
-                    // Reset lock status if historical data is wiped for testing
-                    unlockedAchievements = { first: false, week: false };
-                    localStorage.setItem('pixel_unlocked_achs', JSON.stringify(unlockedAchievements));
-                    initList();
-                    checkAchievements();
-                }
-            });
 
-            $('#tab-list').trigger('click');
+            $('#tab-list').click();
+            checkAchievements();
         });
     </script>
 </body>
